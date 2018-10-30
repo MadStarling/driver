@@ -1,0 +1,19 @@
+{
+    "name": "madstarling/hd-scale",
+    "description": "Trab pratico SO",
+    "type": "project",
+    "authors": [
+        {
+            "name": "madStarling",
+            "email": "starling.damasio@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Politics\\": "src/politics",
+            "Obj\\": "src/obj",
+            "Utilities\\": "src/utilities"
+        }
+    }
+}
