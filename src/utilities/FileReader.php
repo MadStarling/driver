@@ -4,7 +4,6 @@ namespace Utilities;
 class FileReader {
 
     public function getReqs($filePath, $parent){
-        $i = 3;
         $reqs = [];
 
         $fh = fopen(__DIR__.$filePath, 'r');
@@ -15,8 +14,6 @@ class FileReader {
 
         $nTracks = fgets($fh);
         $sP = fgets($fh);
-
-        $sP;
 
         $parent->setHd(new \Obj\HD($sP));
 

@@ -2,7 +2,7 @@
 
 namespace Politics;
 
-class Scan {
+class CScan {
 
     public $hd, $fileReader, $file, $lastSector = true;
 
@@ -23,12 +23,10 @@ class Scan {
         $totalAccessTime = 0;
 
         $initialPos = $this->hd->getCurrentPosition();
-        $missingReq = [];
         $currentTime = 0;
 
-        $reqsLength = count($reqs);
-
         while(count($reqs) > 0){
+            $missingReq = [];
 
             foreach($reqs as $r){
                 if($r->b > $initialPos && $r->a >= $currentTime){
@@ -43,35 +41,23 @@ class Scan {
             $finalReq = new \Obj\Request($currentTime, $this->lastSector, 0, 0);
 
             $totalAccessTime += $this->hd->goTo($finalReq);
-            $currentTime += $totalAccessTime;
+            $currentTime += $totalAccessTime + 1;
             $totalWaitTime += $totalAccessTime - $finalReq->a;
-            $reqs = [];
-
-            foreach(array_reverse($missingReq) as $r){
-                if($r->a >= $currentTime){
-                    $totalAccessTime += $this->hd->goTo($r);
-
-                    $totalWaitTime += $totalAccessTime - $r->a;
-                } else {
-                    $reqs[] = $r;
-                }
-            }
+            $reqs = $missingReq;
         }
 
-        echo "AccessTime=".$totalAccessTime/count($reqsLength)."\n";
-        echo "WaitingTime=".$totalWaitTime/count($reqsLength)."\n";
+        echo "AccessTime=".$totalAccessTime/count($reqs)."\n";
+        echo "WaitingTime=".$totalWaitTime/count($reqs)."\n";
     }
 
     private function orderReqs($reqs){
-        usort($reqs, [$this, "cmp"]);
-
-        return $reqs;
-    }
-
-    private function cmp($a, $b){
-        if ($a->b == $b->b) {
-            return 0;
+        function cmp($a, $b){
+            if ($a->b == $b->b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
         }
-        return ($a < $b) ? -1 : 1;
+        
+        usort($reqs, "cmp");
     }
 }
